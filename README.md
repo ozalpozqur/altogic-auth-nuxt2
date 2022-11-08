@@ -131,6 +131,7 @@ Let's create some views in **pages/** folder as below:
 ![Alt text](github/pages.png "vscode preview")
 
 ### Replacing pages/index.vue with the following code:
+In this page, we will show Login, Login With Magic Link and Register buttons.
 ```vue
 <script>
 export default {
@@ -153,6 +154,7 @@ export default {
 ```
 
 ### Replacing pages/login.vue with the following code:
+In this page, we will show a form to log in with email and password. We will use Altogic's **altogic.auth.signInWithEmail()** function to log in.
 ```vue
 <script>
 export default {
@@ -222,6 +224,7 @@ export default {
 ```
 
 ### Replacing pages/login-with-magic-link.vue with the following code:
+In this page, we will show a form to **log in with Magic Link** with only email. We will use Altogic's **altogic.auth.sendMagicLinkEmail()** function to log in.
 ```vue
 <script>
 import altogic from '~/libs/altogic';
@@ -284,6 +287,7 @@ export default {
 ```
 
 ### Replacing pages/register.vue with the following code:
+In this page, we will show a form to sign up with email and password. We will use Altogic's **altogic.auth.signUpWithEmail()** function to log in.
 ```vue
 <script>
 export default {
@@ -375,6 +379,7 @@ export default {
 ```
 
 ### Replacing pages/profile.vue with the following code:
+In this page, we will show the user's profile.
 ```vue
 <script>
 import Avatar from '~/components/Avatar';
@@ -402,6 +407,7 @@ export default {
 ```
 
 ### Replacing pages/auth-redirect.vue with the following code:
+We use this page for verify the user's email address and **Login With Magic Link Authentication**.
 ```vue
 <script>
 export default {
@@ -503,7 +509,9 @@ export default {
 };
 ```
 
- Create a file named **index.js** into api folder. Then paste the code below into the file.
+Create a file named **index.js** into api folder. Then paste the code below into the file.
+
+In this file, we will create our API endpoints, for example, login, register, logout, etc.
 ```js
 import express from 'express';
 import altogic from '../libs/altogic';
@@ -592,6 +600,7 @@ export default function ({ store, redirect }) {
 
 
 ## Avatar Component for uploading profile picture
+In this component, we will use Altogic's **altogic.storage.bucket('root').upload()** function to upload the image to the storage.
 ```vue
 <script>
 import altogic from '../libs/altogic';
@@ -667,6 +676,7 @@ export default {
 ```
 
 ## UserInfo Component for updating username
+In this component, we will use Altogic's database operations to update the user's name.
 ```vue
 <script>
 import altogic from '~/libs/altogic';
@@ -739,6 +749,7 @@ export default {
 ```
 
 ## Sessions Component for managing sessions
+In this component, we will use Altogic's **altogic.auth.getAllSessions()** to get the user's sessions and delete them.
 ```vue
 <script>
 import altogic from '../libs/altogic';

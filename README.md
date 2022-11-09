@@ -493,7 +493,7 @@ export const actions = {
 };
 
 function parseCookies(req) {
-	const list = {};
+    const list = {};
     const rc = req.headers.cookie;
 
 	rc && rc.split(';').forEach(cookie => {
@@ -626,7 +626,7 @@ export default {
 		userPicture() {
 			return (
 				this.user?.profilePicture ||
-				`https://ui-avatars.com/api/?name=${this.user?.name}&background=0D8ABC&color=fff`
+				`https://ui-avatars.com/api/?name=${this.user?.name}`
 			);
 		},
 	},

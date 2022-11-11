@@ -296,7 +296,7 @@ In this page, we will show a form to sign up with email and password. We will us
 
 We will save session and user infos to state and storage if the api return session. Then user will be redirected to profile page.
 
-If signUpWithEmail does not return session, it means user need to confirm email, so we will show the success message.
+If `signUpWithEmail` does not return session, it means user need to confirm email, so we will show the success message.
 ```vue
 <script>
 export default {

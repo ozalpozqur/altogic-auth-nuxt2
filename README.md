@@ -643,7 +643,7 @@ export default {
 		userPicture() {
 			return (
 				this.user?.profilePicture ||
-				`https://ui-avatars.com/api/?name=${this.user?.name}`
+				'https://ui-avatars.com/api/?name=' + this.user?.name
 			);
 		},
 	},

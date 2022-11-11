@@ -21,19 +21,19 @@ After completion of this tutorial, you will learn the following:
 If you are new to Vue applications, this tutorial is definitely for you to understand the basics and even advanced concepts.
 
 
-## Prerequisites
-To complete this tutorial, make sure you have installed the following tools and utilities on your local development environment.
-- [VsCode](https://code.visualstudio.com/download)
-- [NodeJS](https://nodejs.org/en/download/)
-- [Nuxt.js App](https://nuxtjs.org/docs/get-started/installation)
-- You also need an Altogic Account. If you do not have one, you can create an account by [signin up for Altogic](https://designer.altogic.com/).
-
 ## How email-based sign-up works in Altogic
 By default, when you create an app in Altogic, email-based authentication is enabled. In addition, during email-based authentication, the email address of the user is also verified. Below you can find the flow of email and password-based sign-up process.
 
 ![Authentication Flow](./github/auth-flow.png)
 
 If email verification is disabled, then after step 2, Altogic immediately returns a new session to the user, meaning that steps after step #2 in the above flow are not executed. You can easily configure email-based authentication settings from the **App Settings > Authentication** in Altogic Designer. One critical parameter you need to specify is the Redirect URL, you can also customize this parameter from **App Settings > Authentication**. Finally, you can also customize the email message template from the A**pp Settings > Authentication > Messaget Templates**.
+
+## Prerequisites
+To complete this tutorial, make sure you have installed the following tools and utilities on your local development environment.
+- [VsCode](https://code.visualstudio.com/download)
+- [NodeJS](https://nodejs.org/en/download/)
+- [Nuxt.js App](https://nuxtjs.org/docs/get-started/installation)
+- You also need an Altogic Account. If you do not have one, you can create an account by [signin up for Altogic](https://designer.altogic.com/).
 
 
 ## Creating an Altogic App
@@ -117,9 +117,9 @@ export default altogic;
 
 ## Create Routes
 
-Nuxt has built-in file system routing. It means that we can create a page by creating a file in the **pages/** directory.
+Nuxt has built-in file system routing. It means that we can create a page by creating a file in the `pages/` directory.
 
-Let's create some views in **pages/** folder as below:
+Let's create some views in `pages/` folder as below:
 * index.vue
 * login.vue
 * register.vue
@@ -223,7 +223,8 @@ export default {
 ```
 
 ### Replacing pages/login-with-magic-link.vue with the following code:
-In this page, we will show a form to **log in with Magic Link** with only email. We will use Altogic's **altogic.auth.sendMagicLinkEmail()** function to log in.
+In this page, we will show a form to **log in with Magic Link** with only email. We will use Altogic's `altogic.auth.sendMagicLinkEmail()` function to sending magic link to user's email. 
+
 ```vue
 <script>
 import altogic from '~/libs/altogic';
@@ -457,6 +458,9 @@ export default {
 
 ## Let's create authentication store
 Create a file named **index.js** into store folder. Then paste the code below into the file.
+
+In this file, we will create a store for authentication. We will use this store to store user and session information. We will use this store to check if the user is authenticated or not and access user data from anywhere in the app.
+
 ```js
 import altogic from '~/libs/altogic';
 
@@ -505,10 +509,12 @@ function parseCookies(req) {
 }
 ```
 
-# Let's get to the most important point
-Nuxt is a server side rendering tool, we will do some operations on the backend. So we need to create a folder named **api** in our project root directory.
+# Handling Authentication In Server Side
+This is most important part of the project. We will handle authentication in server side. We will use `altogic` library to handle authentication in server side. 
 
-Open **nuxt.config.js** file and paste the code below into the file.
+Nuxt is a server side rendering tool, we will do some operations on the backend. So we need to create a folder named `api` in our project root directory.
+
+Open `nuxt.config.js` file and paste the code below into the file.
 ```js
 export default {
 	modules: ['@nuxtjs/tailwindcss'],
@@ -586,9 +592,11 @@ export default app;
 ```
 
 ## Let's create a middleware folder
-Create a folder named **middleware** in your project root directory.
+Create a folder named **middleware** in your project root directory and create a file named **auth.js** into middleware folder. 
 
-and create a file named **auth.js** into middleware folder. Then paste the code below into the file.
+This middleware will check if the user is authenticated or not. If the user is not authenticated, it will redirect the user to the login page.
+
+Then paste the code below into the file.
 ```js
 export default function ({ store, redirect }) {
 	if (!store.state.user) {
@@ -596,7 +604,11 @@ export default function ({ store, redirect }) {
 	}
 }
 ```
-and create a file named **guest.js** into middleware folder. Then paste the code below into the file.
+and create a file named **guest.js** into middleware folder. 
+
+This middleware will check if the user is authenticated or not. If the user is authenticated, it will redirect the user to the profile page.
+
+Then paste the code below into the file.
 ```js
 export default function ({ store, redirect }) {
 	if (store.state.user) {
@@ -682,7 +694,7 @@ export default {
 </template>
 ```
 
-## UserInfo Component for updating username
+## UserInfo Component for updating user's name
 In this component, we will use Altogic's database operations to update the user's name.
 ```vue
 <script>
@@ -756,7 +768,7 @@ export default {
 ```
 
 ## Sessions Component for managing sessions
-In this component, we will use Altogic's **altogic.auth.getAllSessions()** to get the user's sessions and delete them.
+In this component, we will use Altogic's `altogic.auth.getAllSessions()` to get the user's sessions and delete them.
 ```vue
 <script>
 import altogic from '../libs/altogic';

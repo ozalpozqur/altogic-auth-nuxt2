@@ -51,10 +51,12 @@ Click + New app and follow the instructions;
 
 ![Create App](github/2-create-app.png)
 
-Then click Next and select Basic Authentication template. This template is creates a default user model for your app which is required by [Altogic Client Library](https://github.com/altogic/altogic-js) to store user data and manage authentication.
+Then click Next and select Basic template. **This template creates a default user data model for your app which is required by [Altogic Client Library](https://www.npmjs.com/package/altogic) to store user data and manage authentication.** You can add additional user fields to this data model (e.g., name, surname, gender, birthdate) and when calling the `signUpWithEmail` method of the client library you can pass these additional data.
 
-Then click Next and select Basic Authentication template. This template is based on session authentication and highly recommended to secure your apps.
+
 ![Choose Template](github/3-choose-template.png)
+> **Tip:** If you do not select the basic template, instead selected the blank app template the user data model will not be created for your app. In order to use the Altogic Client Library's authentication methods you need a user data model to store the user data. You can easily create a new data model manually and from the **App Settings > Authentication** mark this new data model as your user data model.
+
 
 Then click Next to confirm and create an app.
 
@@ -63,8 +65,11 @@ Awesome! We have created our application; now click/tap on the **newly created a
 Click the **Home** icon at the left sidebar to copy the `envUrl` and `clientKey`.
 
 ![Client Keys](github/4-client-keys.png)
+Once the user is created successfully, our Next.js app will route the user to the Verification page, and a verification email will be sent to the user's email address. When the user clicks the link in the mail, the user will navigate to the redirect page to grant authentication rights. After successfully creating a session on the Redirect page, users will be redirected to the Home page.
 
-Once the user created successfully, our Vue.js app will route the user to the Verification page, and a verification email will be sent to the user’s email address. When the user clicks the link in the mail, the user will navigate to the redirect page to grant authentication rights. After successfully creating a session on the Redirect page, users will be redirected to the Home page.
+> If you want, you can deactivate or customize the mail verification from **App Settings -> Authentication** in Logic Designer.
+
+![Mail](github/15-mail.png)
 
 ## Create a Nuxt 2 project
 Make sure you have an up-to-date version of Node.js installed, then run the following command in your command line

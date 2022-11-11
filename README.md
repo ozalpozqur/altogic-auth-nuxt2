@@ -6,7 +6,7 @@
 
 Altogic has an authentication service that integrates and implements well in JAMstack apps. It has a ready-to-use [Javascript client library](https://www.npmjs.com/package/altogic), and it supports many authentication providers such as email/password, phone number, magic link, and OAuth providers like Google, Facebook, Twitter, Github, etc.,
 
-In this tutorial, we will implement email/password authentication with Nuxt 3 and take a look at how as a Nuxt 3 developer, we build applications and integrate with Altogic Authentication.
+In this tutorial, we will implement email/password authentication with Nuxt 2 and take a look at how as a Nuxt 2 developer, we build applications and integrate with Altogic Authentication.
 
 After completion of this tutorial, you will learn the following:
 

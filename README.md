@@ -99,7 +99,7 @@ npm install altogic
 # OR is using yarn
 yarn add altogic
 ```
-Let’s create a libs/ folder inside your root directory to add altogic.js file.
+Let’s create a `libs/` folder inside your root directory to add altogic.js file.
 
 Open altogic.js and paste below code block to export the altogic client instance.
 
@@ -231,7 +231,9 @@ export default {
 ```
 
 ### Replacing pages/login-with-magic-link.vue with the following code:
-In this page, we will show a form to **log in with Magic Link** with only email. We will use Altogic's `altogic.auth.sendMagicLinkEmail()` function to sending magic link to user's email. 
+In this page, we will show a form to **log in with Magic Link** with only email. We will use Altogic's `altogic.auth.sendMagicLinkEmail()` function to sending magic link to user's email.
+
+When the user clicks on the magic link in the email, Altogic verifies the validity of the magic link and, if successful, redirects the user to the redirect URL specified in your app authentication settings with an access token in a query string parameter named `access_token` The magic link flows in a similar way to the sign-up process. We use the `getAuthGrant()` method to create a new session and associated `sessionToken`.
 
 ```vue
 <!-- pages/login-with-magic-link.vue -->
@@ -296,11 +298,7 @@ export default {
 ```
 
 ### Replacing pages/register.vue with the following code:
-In this page, we will show a form to sign up with email and password. We will use fetch function to call our sign-up api.
-
-We will save session and user infos to state and storage if the api returns session. Then user will be redirected to profile page.
-
-If `signUpWithEmail` does not return session, it means user need to confirm email, so we will show the success message.
+In this page, we will show a form to sign up with email and password. We will use **Nuxt Server** call our backend api.
 ```vue
 <!-- pages/register.vue -->
 <script>
@@ -395,9 +393,9 @@ export default {
 ### Replacing pages/profile.vue with the following code:
 In this page, we will show the user's profile, and We will use our sign-out api route.
 
-We will remove session and user infos from state and storage if signOut api returns success. Then user will be redirected to login page.
+We will remove session and user info from state and storage if signOut api returns success. Then, user will be redirected to login page.
 
-This page is protected. Before page loaded, We will check cookie. If there is token, and it's valid, we will sign in and fetch user, session information. If there is not or not valid, the user will be redirected to sign in page.
+This page is protected. Before page loaded, We will check cookie. If there is **sessionToken**, and it's valid, we will sign in and fetch user, session information. If there is not or not valid, the user will be redirected to sign in page.
 ```vue
 <!-- pages/profile.vue -->
 <script>
@@ -426,7 +424,7 @@ export default {
 ```
 
 ### Replacing pages/auth-redirect.vue with the following code:
-We use this page for verify the user's email address and **Login With Magic Link Authentication**.
+In this page, we will use **Nuxt Server** call our backend api to verify user.
 ```vue
 <!-- pages/auth-redirect.vue -->
 <script>

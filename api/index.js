@@ -56,7 +56,7 @@ app.get('/verify-user', async (req, res) => {
 app.get('/logout', async (req, res) => {
 	const { session_token } = req.cookies;
 	await altogic.auth.signOut(session_token);
-	res.clearCookie('session_token');
+	altogic.auth.removeSessionCookie(req, res);
 	res.redirect('/login');
 });
 

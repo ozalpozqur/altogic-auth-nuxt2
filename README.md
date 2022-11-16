@@ -523,6 +523,9 @@ function parseCookies(req) {
 # Handling Authentication In Server Side
 This is the most important part of the project. We will handle authentication in server side. We will use `altogic` library to handle authentication in server side. 
 
+For client-side (browser) rendered frontend apps, Altogic automatically stores the `sessionToken` in local storage. For server-side rendered frontend apps, since we do not have local storage available, we need to store the `sessionToken` somewhere to check whether the user has been authenticated or not. For this reason, we will store the `sessionToken` in an HTTP cookie named `session` which will be exchanged between the client browser and the front end server.
+
+
 Nuxt is a server side rendering tool, we will do some operations on the backend. So we need to create a folder named `api` in our project root directory.
 
 Open `nuxt.config.js` file and paste the code below into the file.
@@ -549,56 +552,56 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.post('/login', async (req, res) => {
-	const { email, password } = req.body;
+    const { email, password } = req.body;
 
-	const { errors, session, user } = await altogic.auth.signInWithEmail(email, password);
+    const { errors, session, user } = await altogic.auth.signInWithEmail(email, password);
 
-	if (errors) {
-		return res.json({ errors });
-	}
+    if (errors) {
+        return res.json({ errors });
+    }
 
-	altogic.auth.setSession(session);
-	altogic.auth.setSessionCookie(session.token, req, res);
+    altogic.auth.setSession(session);
+    altogic.auth.setSessionCookie(session.token, req, res);
 
-	return res.json({
-		session,
-		user,
-	});
+    return res.json({
+        session,
+        user,
+    });
 });
 app.post('/register', async (req, res) => {
-	const { email, password, ...rest } = req.body;
-	const { user, errors, session } = await altogic.auth.signUpWithEmail(email, password, rest);
+    const { email, password, ...rest } = req.body;
+    const { user, errors, session } = await altogic.auth.signUpWithEmail(email, password, rest);
 
-	if (errors) {
-		return res.json({ errors });
-	}
+    if (errors) {
+        return res.json({ errors });
+    }
 
-	if (session) {
-		altogic.auth.setSessionCookie(session.token, req, res);
-		altogic.auth.setSession(session);
-		return res.json({ user, session });
-	}
+    if (session) {
+        altogic.auth.setSessionCookie(session.token, req, res);
+        altogic.auth.setSession(session);
+        return res.json({ user, session });
+    }
 
-	return res.json({ user });
+    return res.json({ user });
 });
 app.get('/verify-user', async (req, res) => {
-	const { access_token } = req.query;
+    const { access_token } = req.query;
 
-	const { errors, user, session } = await altogic.auth.getAuthGrant(access_token);
+    const { errors, user, session } = await altogic.auth.getAuthGrant(access_token);
 
-	if (errors) {
-		return res.json({ errors });
-	}
+    if (errors) {
+        return res.json({ errors });
+    }
 
-	altogic.auth.setSessionCookie(session.token, req, res);
-	altogic.auth.setSession(session);
-	return res.json({ user, session });
+    altogic.auth.setSessionCookie(session.token, req, res);
+    altogic.auth.setSession(session);
+    return res.json({ user, session });
 });
 app.get('/logout', async (req, res) => {
-	const { session_token } = req.cookies;
-	await altogic.auth.signOut(session_token);
-	res.clearCookie('session_token');
-	res.redirect('/login');
+    const { session_token } = req.cookies;
+    await altogic.auth.signOut(session_token);
+    altogic.auth.removeSessionCookie(req, res);
+    res.redirect('/login');
 });
 
 export default app;

@@ -1,10 +1,9 @@
-# How to Authenticate Email and Password Using Nuxt 2 & Altogic
-
+# Email & Password Based Authentication Using Nuxt 2 & Altogic
 
 ## Introduction
-[Altogic](https://www.altogic.com) is a Backend as a Service (BaaS) platform and provides a variety of services in modern web and mobile development. Most modern applications using React or other libraries/frameworks require knowing the identity of a user. And this necessity allows an app to securely save user data and session in the cloud and provide more personalized functionalities and views to users.
+[Altogic](https://www.altogic.com) is a Backend as a Service (BaaS) platform and provides a variety of services in modern web and mobile development. Most modern applications using Nuxt 2 or other libraries/frameworks require knowing the identity of a user. And this necessity allows an app to securely save user data and session in the cloud and provide more personalized functionalities and views to users.
 
-Altogic has an authentication service that integrates and implements well in JAMstack apps. It has a ready-to-use [Javascript client library](https://www.npmjs.com/package/altogic), and it supports many authentication providers such as email/password, phone number, magic link, and OAuth providers like Google, Facebook, Twitter, Github, etc.,
+Altogic has an authentication service that integrates and implements well in JAMstack apps. It has a ready-to-use [Javascript client library](https://www.npmjs.com/package/altogic), and it supports many authentication providers such as email/password, phone number, magic link, and OAuth providers like Google, Facebook, Twitter, Github, Apple etc.,
 
 In this tutorial, we will implement email/password authentication with Nuxt 2 and take a look at how as a Nuxt 2 developer, we build applications and integrate with Altogic Authentication.
 
@@ -26,14 +25,16 @@ By default, when you create an app in Altogic, email-based authentication is ena
 
 ![Authentication Flow](./github/auth-flow.png)
 
-If email verification is disabled, then after step 2, Altogic immediately returns a new session to the user, meaning that steps after step #2 in the above flow are not executed. You can easily configure email-based authentication settings from the **App Settings > Authentication** in Altogic Designer. One critical parameter you need to specify is the Redirect URL, you can also customize this parameter from **App Settings > Authentication**. Finally, you can also customize the email message template from the A**pp Settings > Authentication > Messaget Templates**.
+If email verification is disabled, then after step 2, Altogic immediately returns a new session to the user, meaning that steps after step #2 in the above flow are not executed. You can easily configure email-based authentication settings from the **App Settings > Authentication** in Altogic Designer. One critical parameter you need to specify is the Redirect URL, you can customize this parameter from **App Settings > Authentication**. Finally, you can customize the email message template from the A**pp Settings > Authentication > Messaget Templates**.
+
+> For frontend apps that use server-side rendering, the session token needs to be stored in an HTTP cookie so that the client browser and the frontend server can exchange session information. Otherwise, the session information can be lost, and the Altogic Client library methods that require a session token can fail.
 
 ## Prerequisites
 To complete this tutorial, make sure you have installed the following tools and utilities on your local development environment.
 - [VsCode](https://code.visualstudio.com/download)
 - [NodeJS](https://nodejs.org/en/download/)
 - [Nuxt.js App](https://nuxtjs.org/docs/get-started/installation)
-- You also need an Altogic Account. If you do not have one, you can create an account by [signin up for Altogic](https://designer.altogic.com/).
+- You also need an Altogic Account. If you do not have one, you can create an account by [sign-in up for Altogic](https://designer.altogic.com/).
 
 
 ## Creating an Altogic App
@@ -65,18 +66,17 @@ Awesome! We have created our application; now click/tap on the **newly created a
 Click the **Home** icon at the left sidebar to copy the `envUrl` and `clientKey`.
 
 ![Client Keys](github/4-client-keys.png)
-Once the user is created successfully, our Next.js app will route the user to the Verification page, and a verification email will be sent to the user's email address. When the user clicks the link in the mail, the user will navigate to the redirect page to grant authentication rights. After successfully creating a session on the Redirect page, users will be redirected to the Home page.
+Once the user is created successfully, our Nuxt 2 app will route the user to the Verification page, and a verification email will be sent to the user's email address. When the user clicks the link in the mail, the user will navigate to the redirect page to grant authentication rights. After successfully creating a session on the Redirect page, users will be redirected to the Home page.
 
 > If you want, you can deactivate or customize the mail verification from **App Settings -> Authentication** in Logic Designer.
 
-![Mail](github/15-mail.png)
+![Mail](github/mail.png)
 
 ## Create a Nuxt 2 project
 Make sure you have an up-to-date version of Node.js installed, then run the following command in your command line
 ```bash
 npx create-nuxt-app altogic-auth-nuxt2
 ```
-I showed you which options to choose in the image I will give you below. You can choose the same options as I did.
 ![Create Nuxt App](github/terminal.png)
 Open altogic-auth-nuxt2 folder in Visual Studio Code:
 ```bash
@@ -158,7 +158,7 @@ export default {
 ```
 
 ### Replacing pages/login.vue with the following code:
-In this page, we will show a form to log in with email and password. We will use fetch function to call our backend api. We will save session and user infos to state and storage if the api return success. Then user will be redirected to profile page.
+In this page, we will show a form to log in with email and password. We will use fetch function to call our backend api. We will save session and user infos to state and storage if the api returns success. Then user will be redirected to profile page.
 ```vue
 <script>
 export default {
@@ -294,7 +294,7 @@ export default {
 ### Replacing pages/register.vue with the following code:
 In this page, we will show a form to sign up with email and password. We will use fetch function to call our sign-up api.
 
-We will save session and user infos to state and storage if the api return session. Then user will be redirected to profile page.
+We will save session and user infos to state and storage if the api returns session. Then user will be redirected to profile page.
 
 If `signUpWithEmail` does not return session, it means user need to confirm email, so we will show the success message.
 ```vue
@@ -390,7 +390,7 @@ export default {
 ### Replacing pages/profile.vue with the following code:
 In this page, we will show the user's profile, and We will use our sign-out api route.
 
-We will remove session and user infos from state and storage if signOut api return success. Then user will be redirected to login page.
+We will remove session and user infos from state and storage if signOut api returns success. Then user will be redirected to login page.
 
 This page is protected. Before page loaded, We will check cookie. If there is token, and it's valid, we will sign in and fetch user, session information. If there is not or not valid, the user will be redirected to sign in page.
 ```vue

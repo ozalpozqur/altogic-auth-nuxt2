@@ -14,8 +14,7 @@ export default {
 		},
 		userPicture() {
 			return (
-				this.user?.profilePicture ||
-				`https://ui-avatars.com/api/?name=${this.user?.name}&background=0D8ABC&color=fff`
+				this.user?.profilePicture || 'https://ui-avatars.com/api/?name=' + this.user?.name
 			);
 		},
 	},
@@ -37,7 +36,7 @@ export default {
 			}
 		},
 		async updateProfilePicture(file) {
-			const { data, errors } = await altogic.storage.bucket('root').upload(file.name, file);
+			const { data, errors } = await altogic.storage.bucket('root').upload(`user_${this.user._id}`, file);
 			if (errors) throw new Error("Couldn't upload file");
 			return data;
 		},

@@ -84,6 +84,7 @@ code altogic-auth-nuxt2
 ```
 
 ## Installing some dependencies
+These dependencies are required to use **Nuxt's server**
 ```bash
 npm install cookie-parser express
 ```
@@ -108,16 +109,16 @@ import { createClient } from 'altogic';
 
 const ENV_URL = ''; // replace with your envUrl
 const CLIENT_KEY = ''; // replace with your clientKey
-const API_KEY = ''; // replace with your apiKey
 
 const altogic = createClient(ENV_URL, CLIENT_KEY, {
-	apiKey: API_KEY,
 	signInRedirect: '/login',
 });
 
 export default altogic;
 ```
-> Replace ENV_URL, CLIENT_KEY and API_KEY which is shown in the **Home** view of [Altogic Designer](https://designer.altogic.com/).
+> Replace ENV_URL and CLIENT_KEY which is shown in the **Home** view of [Altogic Designer](https://designer.altogic.com/).
+
+>`signInRedirect` is the sign in page URL to redirect the user when user's session becomes invalid. Altogic client library observes the responses of the requests made to your app backend. If it detects a response with an error code of missing or invalid session token, it can redirect the users to this signin url.
 
 
 ## Create Routes
@@ -137,6 +138,7 @@ Let's create some views in `pages/` folder as below:
 ### Replacing pages/index.vue with the following code:
 In this page, we will show Login, Login With Magic Link and Register buttons.
 ```vue
+<!-- pages/index.vue -->
 <script>
 export default {
 	middleware: ['guest'],
@@ -158,8 +160,9 @@ export default {
 ```
 
 ### Replacing pages/login.vue with the following code:
-In this page, we will show a form to log in with email and password. We will use fetch function to call our backend api. We will save session and user infos to state and storage if the api returns success. Then user will be redirected to profile page.
+In this page, we will show a form to log in with email and password. We will use fetch function to call our backend api. We will save session and user info to state and storage if the api returns success. Then user will be redirected to profile page.
 ```vue
+<!-- pages/login.vue -->
 <script>
 export default {
 	middleware: ['guest'],
@@ -231,6 +234,7 @@ export default {
 In this page, we will show a form to **log in with Magic Link** with only email. We will use Altogic's `altogic.auth.sendMagicLinkEmail()` function to sending magic link to user's email. 
 
 ```vue
+<!-- pages/login-with-magic-link.vue -->
 <script>
 import altogic from '~/libs/altogic';
 
@@ -298,6 +302,7 @@ We will save session and user infos to state and storage if the api returns sess
 
 If `signUpWithEmail` does not return session, it means user need to confirm email, so we will show the success message.
 ```vue
+<!-- pages/register.vue -->
 <script>
 export default {
 	middleware: ['guest'],
@@ -394,6 +399,7 @@ We will remove session and user infos from state and storage if signOut api retu
 
 This page is protected. Before page loaded, We will check cookie. If there is token, and it's valid, we will sign in and fetch user, session information. If there is not or not valid, the user will be redirected to sign in page.
 ```vue
+<!-- pages/profile.vue -->
 <script>
 import Avatar from '~/components/Avatar';
 import Sessions from '~/components/Sessions';
@@ -422,6 +428,7 @@ export default {
 ### Replacing pages/auth-redirect.vue with the following code:
 We use this page for verify the user's email address and **Login With Magic Link Authentication**.
 ```vue
+<!-- pages/auth-redirect.vue -->
 <script>
 export default {
 	middleware: ['guest'],
@@ -467,6 +474,7 @@ Create a file named **index.js** into store folder. Then paste the code below in
 In this file, we will create a store for authentication. We will use this store to store user and session information. We will use this store to check if the user is authenticated or not and access user data from anywhere in the app.
 
 ```js
+// store/index.js
 import altogic from '~/libs/altogic';
 
 export const index = () => ({
@@ -515,22 +523,24 @@ function parseCookies(req) {
 ```
 
 # Handling Authentication In Server Side
-This is most important part of the project. We will handle authentication in server side. We will use `altogic` library to handle authentication in server side. 
+This is the most important part of the project. We will handle authentication in server side. We will use `altogic` library to handle authentication in server side. 
 
 Nuxt is a server side rendering tool, we will do some operations on the backend. So we need to create a folder named `api` in our project root directory.
 
 Open `nuxt.config.js` file and paste the code below into the file.
 ```js
+// nuxt.config.js
 export default {
 	modules: ['@nuxtjs/tailwindcss'],
 	serverMiddleware: [{ path: '/api', handler: '~/api/index.js' }]
 };
 ```
 
-Create a file named **index.js** into api folder. Then paste the code below into the file.
+Create a file named **index.js** into `api/` folder. Then paste the code below into the file.
 
 In this file, we will create our API endpoints, for example, login, register, logout, etc.
 ```js
+// api/index.js
 import express from 'express';
 import altogic from '../libs/altogic';
 import cookieParser from 'cookie-parser';
@@ -597,12 +607,13 @@ export default app;
 ```
 
 ## Let's create a middleware folder
-Create a folder named **middleware** in your project root directory and create a file named **auth.js** into middleware folder. 
+Create a folder named `middleware/` in your project root directory and create a file named **auth.js** into middleware folder. 
 
 This middleware will check if the user is authenticated or not. If the user is not authenticated, it will redirect the user to the login page.
 
 Then paste the code below into the file.
 ```js
+// middleware/auth.js
 export default function ({ store, redirect }) {
 	if (!store.state.user) {
 		return redirect('/login');
@@ -615,6 +626,7 @@ This middleware will check if the user is authenticated or not. If the user is a
 
 Then paste the code below into the file.
 ```js
+// middleware/guest.js
 export default function ({ store, redirect }) {
 	if (store.state.user) {
 		return redirect('/profile');
@@ -624,84 +636,87 @@ export default function ({ store, redirect }) {
 
 
 ## Avatar Component for uploading profile picture
-Open Avatar.js and paste the below code to create an avatar for the user. For convenience, we will be using the user's name as the name of the uploaded file and upload the profile picture to the root directory of our app storage. If needed you can create different buckets for each user or a generic bucket to store all provided photos of users. The Altogic Client Library has all the methods to manage buckets and files.
+Open Avatar.js and paste the below code to create an avatar for the user. 
+
+For convenience, we will be using the user's `_id` as the name of the uploaded file and upload the profile picture to the root directory of our app storage. If needed you can create different buckets for each user or a generic bucket to store all provided photos of users. The Altogic Client Library has all the methods to manage buckets and files.
 ```vue
+<!-- components/Avatar.vue -->
 <script>
 import altogic from '../libs/altogic';
 
 export default {
-	data() {
-		return {
-			loading: false,
-			errors: null,
-		};
-	},
-	computed: {
-		user() {
-			return this.$store.state.user;
-		},
-		userPicture() {
-			return (
-				this.user?.profilePicture ||
-				'https://ui-avatars.com/api/?name=' + this.user?.name
-			);
-		},
-	},
-	methods: {
-		async changeHandler(e) {
-			const file = e.target.files[0];
-			e.target.value = null;
-			if (!file) return;
-			try {
-				this.loading = true;
-				this.errors = null;
-				const { publicPath } = await this.updateProfilePicture(file);
-				const user = await this.updateUser({ profilePicture: publicPath });
-				this.$store.commit('setUser', user);
-			} catch (e) {
-				this.errors = e.message;
-			} finally {
-				this.loading = false;
-			}
-		},
-		async updateProfilePicture(file) {
-			const { data, errors } = await altogic.storage.bucket('root').upload(this.user.name, file);
-			if (errors) throw new Error("Couldn't upload file");
-			return data;
-		},
-		async updateUser(data) {
-			const { data: user, errors } = await altogic.db.model('users').object(this.user._id).update(data);
-			if (errors) throw new Error("Couldn't update user");
-			return user;
-		},
-	},
+    data() {
+        return {
+            loading: false,
+            errors: null,
+        };
+    },
+    computed: {
+        user() {
+            return this.$store.state.user;
+        },
+        userPicture() {
+            return (
+                this.user?.profilePicture || 'https://ui-avatars.com/api/?name=' + this.user?.name
+            );
+        },
+    },
+    methods: {
+        async changeHandler(e) {
+            const file = e.target.files[0];
+            e.target.value = null;
+            if (!file) return;
+            try {
+                this.loading = true;
+                this.errors = null;
+                const { publicPath } = await this.updateProfilePicture(file);
+                const user = await this.updateUser({ profilePicture: publicPath });
+                this.$store.commit('setUser', user);
+            } catch (e) {
+                this.errors = e.message;
+            } finally {
+                this.loading = false;
+            }
+        },
+        async updateProfilePicture(file) {
+            const { data, errors } = await altogic.storage.bucket('root').upload(`user_${this.user._id}`, file);
+            if (errors) throw new Error("Couldn't upload file");
+            return data;
+        },
+        async updateUser(data) {
+            const { data: user, errors } = await altogic.db.model('users').object(this.user._id).update(data);
+            if (errors) throw new Error("Couldn't update user");
+            return user;
+        },
+    },
 };
 </script>
 
 <template>
-	<div>
-		<figure class="flex flex-col gap-4 items-center justify-center py-2">
-			<picture class="border rounded-full w-24 h-24 overflow-hidden">
-				<img class="object-cover w-full h-full" :src="userPicture" :alt="user?.name" />
-			</picture>
-		</figure>
-		<div class="flex flex-col gap-4 justify-center items-center">
-			<label class="border p-2 cursor-pointer">
-				<span v-if="loading">Uploading...</span>
-				<span v-else>Change Avatar</span>
-				<input :disabled="loading" class="hidden" type="file" accept="image/*" @change="changeHandler" />
-			</label>
-			<div class="bg-red-500 p-2 text-white" v-if="errors">
-				{{ errors }}
-			</div>
-		</div>
-	</div>
+    <div>
+        <figure class="flex flex-col gap-4 items-center justify-center py-2">
+            <picture class="border rounded-full w-24 h-24 overflow-hidden">
+                <img class="object-cover w-full h-full" :src="userPicture" :alt="user?.name" />
+            </picture>
+        </figure>
+        <div class="flex flex-col gap-4 justify-center items-center">
+            <label class="border p-2 cursor-pointer">
+                <span v-if="loading">Uploading...</span>
+                <span v-else>Change Avatar</span>
+                <input :disabled="loading" class="hidden" type="file" accept="image/*" @change="changeHandler" />
+            </label>
+            <div class="bg-red-500 p-2 text-white" v-if="errors">
+                {{ errors }}
+            </div>
+        </div>
+    </div>
 </template>
 ```
 
 ## UserInfo Component for updating user's name
 In this component, we will use Altogic's database operations to update the user's name.
 ```vue
+<!-- components/UserInfo.vue -->
 <script>
 import altogic from '~/libs/altogic';
 
@@ -775,6 +790,7 @@ export default {
 ## Sessions Component for managing sessions
 In this component, we will use Altogic's `altogic.auth.getAllSessions()` to get the user's sessions and delete them.
 ```vue
+<!-- components/Sessions.vue -->
 <script>
 import altogic from '../libs/altogic';
 export default {
